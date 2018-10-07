@@ -32,6 +32,13 @@ class Point(val x: Int, val y: Int) : Collider {
  */
 class Bar(val firstCornerX: Int, val firstCornerY: Int, val secondCornerX: Int, val secondCornerY: Int) : Collider {
 
+    override fun equals(other: Any?): Boolean {
+        return other is Bar && (minOf(this.firstCornerX, this.secondCornerX) == minOf(other.firstCornerX, other.secondCornerX)) &&
+                (maxOf(this.firstCornerX, this.secondCornerX) == maxOf(other.firstCornerX, other.secondCornerX)) &&
+                (minOf(this.firstCornerY, this.secondCornerY) == minOf(other.firstCornerY, other.secondCornerY)) &&
+                (maxOf(this.firstCornerY, this.secondCornerY) == maxOf(other.firstCornerY, other.secondCornerY))
+    }
+
     override fun isColliding(other: Collider): Boolean {
         return when (other) {
             is Point -> PointCollidingBar(other)
@@ -45,12 +52,18 @@ class Bar(val firstCornerX: Int, val firstCornerY: Int, val secondCornerX: Int, 
     }
 
     fun BarCollidingBar(other: Bar): Boolean {
-        var ur = false
         val p1 = Point(other.firstCornerX, other.firstCornerY)
         val p2 = Point(other.firstCornerX, other.secondCornerY)
         val p3 = Point(other.secondCornerX, other.firstCornerY)
         val p4 = Point(other.secondCornerX, other.secondCornerY)
-        if ((PointCollidingBar(p1))||(PointCollidingBar(p2))||(PointCollidingBar(p3))||(PointCollidingBar(p4))) ur = true else ur = false
-        return ur
+        var flag1 : Boolean = ((PointCollidingBar(p1))||(PointCollidingBar(p2))||(PointCollidingBar(p3))||(PointCollidingBar(p4)))
+
+        val p5 = Point(this.firstCornerX, this.firstCornerY)
+        val p6 = Point(this.firstCornerX, this.secondCornerY)
+        val p7 = Point(this.secondCornerX, this.firstCornerY)
+        val p8 = Point(this.secondCornerX, this.secondCornerY)
+        var flag2 : Boolean = ((other.PointCollidingBar(p5))||(other.PointCollidingBar(p6))||(other.PointCollidingBar(p7))||(other.PointCollidingBar(p8)))
+
+        return flag1||flag2
     }
 }
